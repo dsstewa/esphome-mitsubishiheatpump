@@ -176,6 +176,21 @@ float MitsubishiHeatPump::toCelsius(float fromFahrenheit) {
     return roundf((fromFahrenheit - 32.0) / 1.8 * 2) / 2.0;
 }
 
+float MitsubishiHeatPump::convertCelsiusToLocalUnit(float temperature, bool use_fahrenheit_) {
+  if (use_fahrenheit_) {
+    return toFahrenheit(temperature);
+  } else {
+    return temperature;
+  }
+}
+
+float MitsubishiHeatPump::convertLocalUnitToCelsius(float temperature, bool use_fahrenheit_) {
+  if (use_fahrenheit_) {
+    return toCelsius(temperature);
+  } else {
+    return temperature;
+  }
+}
 
 
 void MitsubishiHeatPump::update_swing_horizontal(const std::string &swing) {
