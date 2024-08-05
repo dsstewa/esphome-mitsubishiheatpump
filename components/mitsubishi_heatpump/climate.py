@@ -2,18 +2,9 @@ import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import climate, select
 from esphome.components.logger import HARDWARE_UART_TO_SERIAL
-from esphome.const import (
-    CONF_ID,
-    CONF_HARDWARE_UART,
-    CONF_BAUD_RATE,
-    CONF_RX_PIN,
-    CONF_TX_PIN,
-    CONF_UPDATE_INTERVAL,
-    CONF_MODE,
-    CONF_FAN_MODE,
-    CONF_SWING_MODE,
-    PLATFORM_ESP8266
-)
+from esphome.const import (CONF_BAUD_RATE, CONF_FAN_MODE, CONF_HARDWARE_UART,
+                           CONF_ID, CONF_MODE, CONF_RX_PIN, CONF_SWING_MODE,
+                           CONF_TX_PIN, CONF_UPDATE_INTERVAL, PLATFORM_ESP8266)
 from esphome.core import CORE, coroutine
 
 AUTO_LOAD = ["climate", "select"]
@@ -21,6 +12,7 @@ AUTO_LOAD = ["climate", "select"]
 CONF_SUPPORTS = "supports"
 CONF_HORIZONTAL_SWING_SELECT = "horizontal_vane_select"
 CONF_VERTICAL_SWING_SELECT = "vertical_vane_select"
+CONF_TEMP_UNIT = "temperature_unit"
 DEFAULT_CLIMATE_MODES = ["HEAT_COOL", "COOL", "HEAT", "DRY", "FAN_ONLY"]
 DEFAULT_FAN_MODES = ["AUTO", "DIFFUSE", "LOW", "MEDIUM", "MIDDLE", "HIGH"]
 DEFAULT_SWING_MODES = ["OFF", "VERTICAL"]
@@ -73,6 +65,7 @@ CONFIG_SCHEMA = climate.CLIMATE_SCHEMA.extend(
         cv.Optional(CONF_REMOTE_PING_TIMEOUT): cv.positive_int,
         cv.Optional(CONF_RX_PIN): cv.positive_int,
         cv.Optional(CONF_TX_PIN): cv.positive_int,
+        cv.Optional(CONF_TEMP_UNIT, default="C"): cv.one_of("C", "F", upper=True),
         # If polling interval is greater than 9 seconds, the HeatPump library
         # reconnects, but doesn't then follow up with our data request.
         cv.Optional(CONF_UPDATE_INTERVAL, default="500ms"): cv.All(

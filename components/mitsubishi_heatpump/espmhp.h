@@ -55,7 +55,8 @@ class MitsubishiHeatPump : public esphome::PollingComponent, public esphome::cli
          */
         MitsubishiHeatPump(
             HardwareSerial* hw_serial,
-            uint32_t poll_interval=ESPMHP_POLL_INTERVAL_DEFAULT
+            uint32_t poll_interval=ESPMHP_POLL_INTERVAL_DEFAULT,
+             bool use_fahrenheit=false
         );
 
         // Print a banner with library information.
@@ -174,6 +175,7 @@ class MitsubishiHeatPump : public esphome::PollingComponent, public esphome::cli
 
         // Retrieve the HardwareSerial pointer from friend and subclasses.
         HardwareSerial *hw_serial_;
+        bool use_fahrenheit_ (App.get_variable("temperature_unit").as<std::string>() == "C")
         int baud_ = 0;
         int rx_pin_ = -1;
         int tx_pin_ = -1;
