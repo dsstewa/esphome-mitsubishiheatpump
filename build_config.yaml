@@ -1,0 +1,85 @@
+substitutions:
+  name: esphome-local-test
+  friendly_name: ESPHome Local Test
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+  min_version: 2024.6.0
+  name_add_mac_suffix: false
+  project:
+    name: esphome.web
+    version: dev
+
+esp8266:
+  board: esp01_1m
+
+# Enable logging
+logger:
+  baud_rate: 0
+# Enable Home Assistant API
+api:
+
+# Allow Over-The-Air updates
+ota:
+  - platform: esphome
+
+# Allow provisioning Wi-Fi via serial
+
+wifi:
+  # Set up a wifi access point
+  ap: {}
+
+# In combination with the `ap` this allows the user
+# to provision wifi credentials to the device via WiFi AP.
+captive_portal:
+
+dashboard_import:
+  package_import_url: github://esphome/example-configs/esphome-web/esp8266.yaml@main
+  import_full_config: true
+
+# To have a "next url" for improv serial
+web_server:
+
+# Text sensors with general information.
+text_sensor:
+  # Expose ESPHome version as sensor.
+  - platform: version
+    name: ${name} ESPHome Version
+  # Expose WiFi information as sensors.
+  - platform: wifi_info
+    ip_address:
+      name: ${name} IP
+    ssid:
+      name: ${name} SSID
+    bssid:
+      name: ${name} BSSID
+
+# Sensors with general information.
+sensor:
+  # Uptime sensor.
+  - platform: uptime
+    name: ${name} Uptime
+
+  # WiFi Signal sensor.
+  - platform: wifi_signal
+    name: ${name} WiFi Signal
+    update_interval: 60s
+
+external_components:
+  - source: './components'
+
+climate:
+  - platform: mitsubishi_heatpump
+    name: 'Downstairs ESPHOME'
+    hardware_uart: UART0
+    baud_rate: 2400
+    update_interval: 500ms
+    supports:
+      mode: ['HEAT_COOL', 'COOL', 'HEAT', 'FAN_ONLY']
+      fan_mode: ['AUTO', 'LOW', 'MEDIUM', 'MIDDLE']
+      swing_mode: ['OFF', 'VERTICAL', 'HORIZONTAL', 'BOTH']
+    visual:
+      min_temperature: 16
+      max_temperature: 31
+      temperature_step: 1.0
