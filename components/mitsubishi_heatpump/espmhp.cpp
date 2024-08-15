@@ -331,12 +331,13 @@ void MitsubishiHeatPump::control(const climate::ClimateCall &call) {
     }
 
     if (has_temp){
+        float rounded_temp = this->roundCelsiusValues(*call.get_target_temperature()); // Round the temperature
         ESP_LOGV(
             "control", "Sending target temp: %.1f",
-            *call.get_target_temperature()
+            rounded_temp
         );
-        hp->setTemperature(*call.get_target_temperature());
-        this->target_temperature = *call.get_target_temperature();
+        hp->setTemperature(rounded_temp); // Set the rounded temperature on the heat pump
+        this->target_temperature = rounded_temp;
         updated = true;
     }
 
@@ -793,6 +794,30 @@ void MitsubishiHeatPump::log_packet(byte* packet, unsigned int length, char* pac
     
     ESP_LOGV(TAG, "PKT: [%s] %s", packetDirection, packetHex.c_str());
 }
+// This function takes in the exact Celsius value and returns the rounded Celsius value.
+// These values correspond to Exact Fahrenheit values converted to Celsius.
+float MitsubishiHeatPump::roundCelsiusValues(float exactCelsius) {
+    // Mapping of exact Celsius values to their corresponding rounded values
+    const std::map<float, float> lookupTable = {
+        {16.11, 16.0}, {16.67, 16.5}, {17.22, 17.0}, {17.78, 17.5}, {18.33, 18.0},
+        {18.89, 18.5}, {19.44, 19.0}, {20.00, 20.0}, {20.56, 21.0}, {21.11, 21.5},
+        {21.67, 22.0}, {22.22, 22.5}, {22.78, 23.0}, {23.33, 23.5}, {23.89, 24.0},
+        {24.44, 24.5}, {25.00, 25.0}, {25.56, 25.5}, {26.11, 26.0}, {26.67, 26.5},
+        {27.22, 27.0}, {27.78, 27.5}, {28.33, 28.0}, {28.89, 28.5}, {29.44, 29.0},
+        {30.00, 29.5}, {30.56, 30.0}, {31.11, 30.5}
+    };
+
+    // Look for the exact Celsius value in the lookup table
+    auto it = lookupTable.find(exactCelsius);
+    if (it != lookupTable.end()) {
+        return it->second;  // Return the rounded Celsius value if found
+    }
+
+    // If no exact match is found, round to the nearest 0.5
+    return round(exactCelsius * 2.0) / 2.0;
+}
+
+
 
 float MitsubishiHeatPump::toCelsius(float fromFahrenheit) {
     const std::map<int, float> lookupTable = {

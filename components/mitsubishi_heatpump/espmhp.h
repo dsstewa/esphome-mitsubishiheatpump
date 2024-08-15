@@ -187,6 +187,7 @@ class MitsubishiHeatPump : public esphome::PollingComponent, public esphome::cli
 
         float toCelsius(float fromFahrenheit);
         float toFahrenheit(float fromCelsius);
+        float roundCelsiusValues(float exactCelsius);
 
 };
 
