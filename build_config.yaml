@@ -69,7 +69,10 @@ sensor:
 # external_components:
 #   - source: './components'
 external_components:
-  - source: ./components
+  - source:
+      type: git
+      url: https://github.com/dsstewa/esphome-mitsubishiheatpump.git
+      ref: correct-fahrenheit-celsius-to-match-remote
 
 climate:
   - platform: mitsubishi_heatpump
