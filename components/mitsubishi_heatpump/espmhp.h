@@ -42,6 +42,10 @@ static const uint8_t ESPMHP_MAX_TEMPERATURE = 31; // degrees C,
 static const float   ESPMHP_TEMPERATURE_STEP = 0.5; // temperature setting step,
                                                     // in degrees C
 
+static const char* HOME_ASSISTANT_TEMPERATURE_UNIT = "F"; // When HA converts temperature to Celsius, it is exact. The Heatpump only accepts rounded Celsius values 20.0 or 20.5
+                                                          // This flag will round the temperatures so that it matches the heatpump's remote and any connected thermostats.
+
+
 class MitsubishiHeatPump : public esphome::PollingComponent, public esphome::climate::Climate {
 
     public:
