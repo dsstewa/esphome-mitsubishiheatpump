@@ -33,3 +33,6 @@
 
 # Python cache
 __pycache__
+
+# ESPHome folder
+.esphome/
