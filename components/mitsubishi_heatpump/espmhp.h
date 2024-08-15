@@ -184,6 +184,10 @@ class MitsubishiHeatPump : public esphome::PollingComponent, public esphome::cli
         std::optional<std::chrono::duration<long long, std::ratio<60>>> remote_ping_timeout_;
         std::optional<std::chrono::time_point<std::chrono::steady_clock>> last_remote_temperature_sensor_update_;
         std::optional<std::chrono::time_point<std::chrono::steady_clock>> last_ping_request_;
+
+        float toCelsius(float fromFahrenheit);
+        float toFahrenheit(float fromCelsius);
+
 };
 
 #endif
