@@ -448,8 +448,8 @@ void MitsubishiHeatPump::hpSettingsChanged() {
         if (strcmp(currentSettings.mode, "HEAT") == 0) {
             this->mode = climate::CLIMATE_MODE_HEAT;
             if (heat_setpoint != currentSettings.temperature) {
-                heat_setpoint = currentSettings.temperature;
-                save(currentSettings.temperature, heat_storage);
+                heat_setpoint = this->roundCelsiusValues(currentSettings.temperature); // Round the temperature
+                save(heat_setpoint.value(), heat_storage);
             }
             this->action = climate::CLIMATE_ACTION_IDLE;
         } else if (strcmp(currentSettings.mode, "DRY") == 0) {
@@ -458,8 +458,8 @@ void MitsubishiHeatPump::hpSettingsChanged() {
         } else if (strcmp(currentSettings.mode, "COOL") == 0) {
             this->mode = climate::CLIMATE_MODE_COOL;
             if (cool_setpoint != currentSettings.temperature) {
-                cool_setpoint = currentSettings.temperature;
-                save(currentSettings.temperature, cool_storage);
+                cool_setpoint = this->roundCelsiusValues(currentSettings.temperature); // Round the temperature
+                save(cool_setpoint.value(), cool_storage);
             }
             this->action = climate::CLIMATE_ACTION_IDLE;
         } else if (strcmp(currentSettings.mode, "FAN") == 0) {
@@ -468,8 +468,8 @@ void MitsubishiHeatPump::hpSettingsChanged() {
         } else if (strcmp(currentSettings.mode, "AUTO") == 0) {
             this->mode = climate::CLIMATE_MODE_HEAT_COOL;
             if (auto_setpoint != currentSettings.temperature) {
-                auto_setpoint = currentSettings.temperature;
-                save(currentSettings.temperature, auto_storage);
+                auto_setpoint = this->roundCelsiusValues(currentSettings.temperature); // Round the temperature
+                save(auto_setpoint.value(), auto_storage);
             }
             this->action = climate::CLIMATE_ACTION_IDLE;
         } else {
@@ -623,15 +623,16 @@ void MitsubishiHeatPump::hpStatusChanged(heatpumpStatus currentStatus) {
 }
 
 void MitsubishiHeatPump::set_remote_temperature(float temp) {
-    ESP_LOGD(TAG, "Setting remote temp: %.1f", temp);
-    if (temp > 0) {
+    float rounded_temp = this->roundCelsiusValues(temp); // Round the temperature
+    ESP_LOGD(TAG, "Setting remote temp: %.1f", rounded_temp);
+    if (rounded_temp > 0) {
         last_remote_temperature_sensor_update_ = 
             std::chrono::steady_clock::now();
     } else {
         last_remote_temperature_sensor_update_.reset();
     }
 
-    this->hp->setRemoteTemperature(temp);
+    this->hp->setRemoteTemperature(rounded_temp);
 }
 
 void MitsubishiHeatPump::ping() {

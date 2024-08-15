@@ -66,8 +66,10 @@ sensor:
     name: ${name} WiFi Signal
     update_interval: 60s
 
+# external_components:
+#   - source: './components'
 external_components:
-  - source: './components'
+  - source: ./components
 
 climate:
   - platform: mitsubishi_heatpump
