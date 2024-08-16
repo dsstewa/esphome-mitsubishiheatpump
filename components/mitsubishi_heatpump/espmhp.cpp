@@ -561,7 +561,7 @@ void MitsubishiHeatPump::hpSettingsChanged() {
      */
     this->target_temperature = currentSettings.temperature;
     ESP_LOGI(TAG, "Target temp is: %f", this->target_temperature);
-    ESP_LOGI(TAG, "Rounded Target temp is: %f", this->roundCelsiusValues(this->target_temperature));
+    ESP_LOGI(TAG, "Rounded Target temp is: %f", 2.33);
 
     /*
      * ******** Publish state back to ESPHome. ********

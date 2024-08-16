@@ -66,13 +66,13 @@ sensor:
     name: ${name} WiFi Signal
     update_interval: 60s
 
-# external_components:
-#   - source: './components'
 external_components:
-  - source:
-      type: git
-      url: https://github.com/dsstewa/esphome-mitsubishiheatpump.git
-      ref: correct-fahrenheit-celsius-to-match-remote
+  - source: './components'
+# external_components:
+#   - source:
+#       type: git
+#       url: https://github.com/dsstewa/esphome-mitsubishiheatpump.git
+#       ref: correct-fahrenheit-celsius-to-match-remote
 
 climate:
   - platform: mitsubishi_heatpump
