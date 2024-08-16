@@ -58,6 +58,10 @@ class MitsubishiHeatPump : public esphome::PollingComponent, public esphome::cli
             uint32_t poll_interval=ESPMHP_POLL_INTERVAL_DEFAULT
         );
 
+        float toCelsius(float fromFahrenheit);
+        float roundCelsiusValues(float exactCelsius);
+        float exactCelsiusValues(float roundedCelsius)
+        ;
         // Print a banner with library information.
         void banner();
 
