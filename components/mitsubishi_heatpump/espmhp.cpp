@@ -819,7 +819,7 @@ float MitsubishiHeatPump::roundCelsiusValues(float exactCelsius) {
 
 float MitsubishiHeatPump::exactCelsiusValues(float roundedCelsius) {
     // Mapping of rounded Celsius values to their corresponding exact values
-    sdf
+    
     const std::map<float, float> reverseLookupTable = {
         {16.0, 16.11}, {16.5, 16.67}, {17.0, 17.22}, {17.5, 17.78}, {18.0, 18.33},
         {18.5, 18.89}, {19.0, 19.44}, {20.0, 20.00}, {21.0, 20.56}, {21.5, 21.11},
