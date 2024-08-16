@@ -337,12 +337,13 @@ void MitsubishiHeatPump::control(const climate::ClimateCall &call) {
     }
 
     if (has_temp){
+        float rounded_temp = roundCelsiusValues(*call.get_target_temperature());
         ESP_LOGV(
             "control", "Sending target temp: %.1f",
-            *call.get_target_temperature()
+            rounded_temp
         );
-        hp->setTemperature(*call.get_target_temperature());
-        this->target_temperature = *call.get_target_temperature();
+        hp->setTemperature(rounded_temp);
+        this->target_temperature = rounded_temp;
         updated = true;
     }
 
@@ -452,9 +453,9 @@ void MitsubishiHeatPump::hpSettingsChanged() {
     if (strcmp(currentSettings.power, "ON") == 0) {
         if (strcmp(currentSettings.mode, "HEAT") == 0) {
             this->mode = climate::CLIMATE_MODE_HEAT;
-            if (heat_setpoint != exactCelsiusValues(currentSettings.temperature)) {
-                heat_setpoint = exactCelsiusValues(currentSettings.temperature);
-                save(exactCelsiusValues(currentSettings.temperature), heat_storage);
+            if (heat_setpoint != currentSettings.temperature) {
+                heat_setpoint = currentSettings.temperature;
+                save(currentSettings.temperature, heat_storage);
             }
             this->action = climate::CLIMATE_ACTION_IDLE;
         } else if (strcmp(currentSettings.mode, "DRY") == 0) {
@@ -462,9 +463,9 @@ void MitsubishiHeatPump::hpSettingsChanged() {
             this->action = climate::CLIMATE_ACTION_DRYING;
         } else if (strcmp(currentSettings.mode, "COOL") == 0) {
             this->mode = climate::CLIMATE_MODE_COOL;
-            if (cool_setpoint != exactCelsiusValues(currentSettings.temperature)) {
-                cool_setpoint = exactCelsiusValues(currentSettings.temperature);
-                save(exactCelsiusValues(currentSettings.temperature), cool_storage);
+            if (cool_setpoint != currentSettings.temperature) {
+                cool_setpoint = currentSettings.temperature;
+                save(currentSettings.temperature, cool_storage);
             }
             this->action = climate::CLIMATE_ACTION_IDLE;
         } else if (strcmp(currentSettings.mode, "FAN") == 0) {
@@ -472,9 +473,9 @@ void MitsubishiHeatPump::hpSettingsChanged() {
             this->action = climate::CLIMATE_ACTION_FAN;
         } else if (strcmp(currentSettings.mode, "AUTO") == 0) {
             this->mode = climate::CLIMATE_MODE_HEAT_COOL;
-            if (auto_setpoint != exactCelsiusValues(currentSettings.temperature)) {
-                auto_setpoint = exactCelsiusValues(currentSettings.temperature);
-                save(exactCelsiusValues(currentSettings.temperature), auto_storage);
+            if (auto_setpoint != currentSettings.temperature) {
+                auto_setpoint = currentSettings.temperature;
+                save(currentSettings.temperature, auto_storage);
             }
             this->action = climate::CLIMATE_ACTION_IDLE;
         } else {
@@ -747,9 +748,9 @@ void MitsubishiHeatPump::setup() {
     auto_storage = global_preferences->make_preference<uint8_t>(this->get_object_id_hash() + 3);
 
     // load values from storage:
-    cool_setpoint = roundCelsiusValues(load(cool_storage).value_or(NAN));
-    heat_setpoint = roundCelsiusValues(load(heat_storage).value_or(NAN));
-    auto_setpoint = roundCelsiusValues(load(auto_storage).value_or(NAN));
+    cool_setpoint = load(cool_storage);
+    heat_setpoint = load(heat_storage);
+    auto_setpoint = load(auto_storage);
 
     this->dump_config();
 }
