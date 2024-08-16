@@ -808,7 +808,7 @@ float MitsubishiHeatPump::roundCelsiusValues(float exactCelsius) {
   
    
     // Mapping of exact Celsius values to their corresponding rounded values
-    const std::map<float, float> lookupTable = {
+    const std::vector<std::pair<float, float>> lookupTable = {
         {16.11, 16.0}, {16.67, 16.5}, {17.22, 17.0}, {17.78, 17.5}, {18.33, 18.0},
         {18.89, 18.5}, {19.44, 19.0}, {20.00, 20.0}, {20.56, 21.0}, {21.11, 21.5},
         {21.67, 22.0}, {22.22, 22.5}, {22.78, 23.0}, {23.33, 23.5}, {23.89, 24.0},
@@ -817,15 +817,15 @@ float MitsubishiHeatPump::roundCelsiusValues(float exactCelsius) {
         {30.00, 29.5}, {30.56, 30.0}, {31.11, 30.5}
     };
 
-    // Look for the exact Celsius value in the lookup table
-    auto it = lookupTable.find(exactCelsius);
-    if (it != lookupTable.end()) {
-         ESP_LOGI(TAG, "Output roundedCelsius value: %.2f", it->second);
-         return it->second;
-        return it->second;  // Return the rounded Celsius value if found
+    // Find the closest match in the lookup table
+    for (const auto& entry : lookupTable) {
+        if (fabs(exactCelsius - entry.first) < 0.5) {
+            ESP_LOGI(TAG, "Output roundedCelsius value: %.2f", entry.second);
+            return entry.second;
+        }
     }
 
-    // If no exact match is found, round to the nearest 0.5
+    // If no close match is found, round to the nearest 0.5
     return round(exactCelsius * 2.0) / 2.0;
 }
 
