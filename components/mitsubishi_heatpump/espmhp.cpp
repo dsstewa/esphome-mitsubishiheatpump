@@ -578,7 +578,7 @@ void MitsubishiHeatPump::hpSettingsChanged() {
  * Report changes in the current temperature sensed by the HeatPump.
  */
 void MitsubishiHeatPump::hpStatusChanged(heatpumpStatus currentStatus) {
-    this->current_temperature = currentStatus.roomTemperature;
+    this->current_temperature = this->exactCelsiusValues(currentStatus.roomTemperature);
     switch (this->mode) {
         case climate::CLIMATE_MODE_HEAT:
             if (currentStatus.operating) {
@@ -805,8 +805,6 @@ void MitsubishiHeatPump::log_packet(byte* packet, unsigned int length, char* pac
 // These values correspond to Exact Fahrenheit values converted to Celsius.
 float MitsubishiHeatPump::roundCelsiusValues(float exactCelsius) {
     ESP_LOGI(TAG, "Input exactCelsius value: %.2f", exactCelsius);
-  
-   
     // Mapping of exact Celsius values to their corresponding rounded values
     const std::vector<std::pair<float, float>> lookupTable = {
         {16.11, 16.0}, {16.67, 16.5}, {17.22, 17.0}, {17.78, 17.5}, {18.33, 18.0},
@@ -830,8 +828,11 @@ float MitsubishiHeatPump::roundCelsiusValues(float exactCelsius) {
 }
 
 float MitsubishiHeatPump::exactCelsiusValues(float roundedCelsius) {
+     ESP_LOGI(TAG, "Input exactCelsius value: %.2f", roundedCelsius);
+    // Round the input to one decimal place
+    float roundedInput = round(roundedCelsius * 10.0) / 10.0;
+
     // Mapping of rounded Celsius values to their corresponding exact values
-    
     const std::map<float, float> reverseLookupTable = {
         {16.0, 16.11}, {16.5, 16.67}, {17.0, 17.22}, {17.5, 17.78}, {18.0, 18.33},
         {18.5, 18.89}, {19.0, 19.44}, {20.0, 20.00}, {21.0, 20.56}, {21.5, 21.11},
@@ -842,8 +843,9 @@ float MitsubishiHeatPump::exactCelsiusValues(float roundedCelsius) {
     };
 
     // Look for the rounded Celsius value in the reverse lookup table
-    auto it = reverseLookupTable.find(roundedCelsius);
+    auto it = reverseLookupTable.find(roundedInput);
     if (it != reverseLookupTable.end()) {
+        ESP_LOGI(TAG, "Output ExactCelsius value: %.2f", it->second);
         return it->second;  // Return the exact Celsius value if found
     }
 
