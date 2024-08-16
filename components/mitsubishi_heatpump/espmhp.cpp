@@ -797,6 +797,9 @@ void MitsubishiHeatPump::log_packet(byte* packet, unsigned int length, char* pac
 // This function takes in the exact Celsius value and returns the rounded Celsius value.
 // These values correspond to Exact Fahrenheit values converted to Celsius.
 float MitsubishiHeatPump::roundCelsiusValues(float exactCelsius) {
+    ESP_LOGI(TAG, "Input exactCelsius value: %.2f", exactCelsius);
+  
+   
     // Mapping of exact Celsius values to their corresponding rounded values
     const std::map<float, float> lookupTable = {
         {16.11, 16.0}, {16.67, 16.5}, {17.22, 17.0}, {17.78, 17.5}, {18.33, 18.0},
@@ -810,6 +813,8 @@ float MitsubishiHeatPump::roundCelsiusValues(float exactCelsius) {
     // Look for the exact Celsius value in the lookup table
     auto it = lookupTable.find(exactCelsius);
     if (it != lookupTable.end()) {
+         ESP_LOGI(TAG, "Output roundedCelsius value: %.2f", it->second);
+         return it->second;
         return it->second;  // Return the rounded Celsius value if found
     }
 
