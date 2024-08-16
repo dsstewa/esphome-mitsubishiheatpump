@@ -30,6 +30,7 @@
 *.exe
 *.out
 *.app
+.esphome
 
 # Python cache
 __pycache__
