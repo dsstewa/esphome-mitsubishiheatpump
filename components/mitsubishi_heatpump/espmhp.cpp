@@ -270,13 +270,7 @@ void MitsubishiHeatPump::control(const climate::ClimateCall &call) {
         case climate::CLIMATE_MODE_COOL:
             hp->setModeSetting("COOL");
             hp->setPowerSetting("ON");
-            ESP_LOGI(TAG, "COOL SWITCH STATEMENT");
-            ESP_LOGI(TAG, "Mode: COOL");
-            ESP_LOGI(TAG, "Power: ON");
-            ESP_LOGI(TAG, "Has Mode: %s", YESNO(has_mode));
-            ESP_LOGI(TAG, "Has Temp: %s", YESNO(has_temp));
-            ESP_LOGI(TAG, "Cool Setpoint: %.1f", cool_setpoint.value_or(-1));
-            ESP_LOGI(TAG, "Target Temperature: %.1f", this->target_temperature);
+          
             if (has_mode){
                 if (cool_setpoint.has_value() && !has_temp) {
                     hp->setTemperature(cool_setpoint.value());
