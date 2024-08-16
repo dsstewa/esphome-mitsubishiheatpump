@@ -793,3 +793,70 @@ void MitsubishiHeatPump::log_packet(byte* packet, unsigned int length, char* pac
     
     ESP_LOGV(TAG, "PKT: [%s] %s", packetDirection, packetHex.c_str());
 }
+
+// This function takes in the exact Celsius value and returns the rounded Celsius value.
+// These values correspond to Exact Fahrenheit values converted to Celsius.
+float MitsubishiHeatPump::roundCelsiusValues(float exactCelsius) {
+    // Mapping of exact Celsius values to their corresponding rounded values
+    const std::map<float, float> lookupTable = {
+        {16.11, 16.0}, {16.67, 16.5}, {17.22, 17.0}, {17.78, 17.5}, {18.33, 18.0},
+        {18.89, 18.5}, {19.44, 19.0}, {20.00, 20.0}, {20.56, 21.0}, {21.11, 21.5},
+        {21.67, 22.0}, {22.22, 22.5}, {22.78, 23.0}, {23.33, 23.5}, {23.89, 24.0},
+        {24.44, 24.5}, {25.00, 25.0}, {25.56, 25.5}, {26.11, 26.0}, {26.67, 26.5},
+        {27.22, 27.0}, {27.78, 27.5}, {28.33, 28.0}, {28.89, 28.5}, {29.44, 29.0},
+        {30.00, 29.5}, {30.56, 30.0}, {31.11, 30.5}
+    };
+
+    // Look for the exact Celsius value in the lookup table
+    auto it = lookupTable.find(exactCelsius);
+    if (it != lookupTable.end()) {
+        return it->second;  // Return the rounded Celsius value if found
+    }
+
+    // If no exact match is found, round to the nearest 0.5
+    return round(exactCelsius * 2.0) / 2.0;
+}
+
+float MitsubishiHeatPump::exactCelsiusValues(float roundedCelsius) {
+    // Check if the temperature unit is Fahrenheit
+    if (strcmp(HOME_ASSISTANT_TEMPERATURE_UNIT, "F") == 0) {
+        // Mapping of rounded Celsius values to their corresponding exact values
+        const std::map<float, float> reverseLookupTable = {
+            {16.0, 16.11}, {16.5, 16.67}, {17.0, 17.22}, {17.5, 17.78}, {18.0, 18.33},
+            {18.5, 18.89}, {19.0, 19.44}, {20.0, 20.00}, {21.0, 20.56}, {21.5, 21.11},
+            {22.0, 21.67}, {22.5, 22.22}, {23.0, 22.78}, {23.5, 23.33}, {24.0, 23.89},
+            {24.5, 24.44}, {25.0, 25.00}, {25.5, 25.56}, {26.0, 26.11}, {26.5, 26.67},
+            {27.0, 27.22}, {27.5, 27.78}, {28.0, 28.33}, {28.5, 28.89}, {29.0, 29.44},
+            {29.5, 30.00}, {30.0, 30.56}, {30.5, 31.11}
+        };
+
+        // Look for the rounded Celsius value in the reverse lookup table
+        auto it = reverseLookupTable.find(roundedCelsius);
+        if (it != reverseLookupTable.end()) {
+            return it->second;  // Return the exact Celsius value if found
+        }
+    }
+
+    // If no exact match is found or the unit is not Fahrenheit, return the input value
+    return roundedCelsius;
+}
+
+
+float MitsubishiHeatPump::toCelsius(float fromFahrenheit) {
+    const std::map<int, float> lookupTable = {
+        {61, 16.0}, {62, 16.5}, {63, 17.0}, {64, 17.5}, {65, 18.0},
+        {66, 18.5}, {67, 19.0}, {68, 20.0}, {69, 21.0}, {70, 21.5},
+        {71, 22.0}, {72, 22.5}, {73, 23.0}, {74, 23.5}, {75, 24.0},
+        {76, 24.5}, {77, 25.0}, {78, 25.5}, {79, 26.0}, {80, 26.5},
+        {81, 27.0}, {82, 27.5}, {83, 28.0}, {84, 28.5}, {85, 29.0},
+        {86, 29.5}, {87, 30.0}, {88, 30.5}
+    };
+
+    auto it = lookupTable.find(static_cast<int>(fromFahrenheit));
+    if (it != lookupTable.end()) {
+        return it->second;
+    }
+
+    float result = (fromFahrenheit - 32.0) / 1.8;
+    return round(result * 2) / 2.0;
+}
