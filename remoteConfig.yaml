@@ -1,6 +1,6 @@
 substitutions:
-  name: esphome-local-test
-  friendly_name: ESPHome Local Test
+  name: esphome-web-123
+  friendly_name: Downstairs Mitsubishi
 
 esphome:
   name: ${name}
@@ -66,29 +66,26 @@ sensor:
     name: ${name} WiFi Signal
     update_interval: 60s
 
-external_components:
-  - source: './components'
 # external_components:
-#   - source:
-#       type: git
-#       url: https://github.com/dsstewa/esphome-mitsubishiheatpump.git
-#       ref: correct-fahrenheit-celsius-to-match-remote
+#   - source: github://geoffdavis/esphome-mitsubishiheatpump
+
+external_components:
+  - source:
+      type: git
+      url: https://github.com/dsstewa/esphome-mitsubishiheatpump.git
+      ref: correct-fahrenheit-2
+    refresh: 1s
 
 climate:
   - platform: mitsubishi_heatpump
-    name: 'Downstairs ESPHOME'
+    name: 'Downstairs'
     hardware_uart: UART0
     baud_rate: 2400
     update_interval: 500ms
     supports:
       mode: ['HEAT_COOL', 'COOL', 'HEAT', 'FAN_ONLY']
       fan_mode: ['AUTO', 'LOW', 'MEDIUM', 'MIDDLE']
-      swing_mode: ['OFF', 'VERTICAL', 'HORIZONTAL', 'BOTH']
+      swing_mode: ['OFF', 'VERTICAL']
+
     visual:
       temperature_step: 1.0
-    heat:
-      min_temperature: 16
-      max_temperature: 31
-    cool:
-      min_temperature: 20
-      max_temperature: 30
